@@ -7,7 +7,7 @@ if sys.version_info < (2, 6):
 from setuptools import setup, find_packages
 from pip.req import parse_requirements
 
-install_reqs = parse_requirements('requirements.txt')
+install_reqs = parse_requirements('requirements.txt', session='test')
 reqs = [str(ir.req) for ir in install_reqs]
 
 setup(
