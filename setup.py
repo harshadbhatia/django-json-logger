@@ -18,8 +18,7 @@ setup(
     description = "A Django app for adding json log formatter",
     author = "Harshad Bhatia",
     author_email = "harshadbhatia2012@gmail.com",
-    package_dir = {'': 'django_logger'},
-    packages = find_packages("django_logger", exclude="tests"),
+    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     test_suite = "tests.tests",
     install_requires = reqs,
     classifiers = [
