@@ -26,6 +26,8 @@ Usage
 )
 ```
 
+### Add `CID_GENERATE = True` to your django settings file
+
 
 ### Runserver using `python manage.py runserver`
 
