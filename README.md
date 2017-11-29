@@ -26,7 +26,31 @@ Usage
 )
 ```
 
-### Add `CID_GENERATE = True` to your django settings file
+### Add logger middleware to your `MIDDLEWARE` django settings file
+
+```python
+    MIDDLEWARE = [
+    # ...
+    'django_logger.middleware.CidMiddleware',
+]
+)
+```
+
+### Add `CID_GENERATE` to your django settings file
+
+```python
+    CID_GENERATE = True
+)
+```
+
+### To add extra values to logging 
+
+In django settings file add `LOG_EXTRA_METHOD` method definition as string value. The method should always return a dictionary.
+
+```python
+    LOG_EXTRA_METHOD = 'my_module.my_method'
+)
+```
 
 
 ### Runserver using `python manage.py runserver`

@@ -4,7 +4,6 @@ from threading import local
 from importlib import import_module
 from django.conf import settings
 
-
 _thread_locals = local()
 
 META_KEYS = {
@@ -52,6 +51,8 @@ def get_extra_method_values():
 
     except AttributeError:
         return {}
+    except ValueError:
+        return {}
 
 
 def add_extra_information(record=None, log_record={}):
@@ -68,7 +69,7 @@ def add_extra_information(record=None, log_record={}):
         if 'body' in request:
             log_record['REQUEST_BODY'] = request.body
 
-        if 'level' in log_record:
+        if log_record.get('level'):
             log_record['level'] = log_record['level'].upper()
         else:
             log_record['level'] = record.levelname if record else 'ERROR'
@@ -89,5 +90,6 @@ def log_output(request, response):
 
     if regex.match(str(response.status_code)):
         logger = logging.getLogger(__name__)
-        logger = logging.LoggerAdapter(logger, add_extra_information(log_record={'request': request}, ))
+        logger = logging.LoggerAdapter(logger, add_extra_information(log_record={'request': request}))
+
         logger.error('Exception with status code {0} happened.'.format(response.status_code))
