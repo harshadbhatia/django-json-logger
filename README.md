@@ -26,6 +26,16 @@ Usage
 )
 ```
 
+### Add logger middleware to your `MIDDLEWARE` django settings file
+
+```python
+    MIDDLEWARE = [
+    # ...
+    'django_logger.middleware.CidMiddleware',
+]
+)
+```
+
 ### Add `CID_GENERATE` to your django settings file
 
 ```python
