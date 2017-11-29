@@ -1,14 +1,23 @@
 import re
 import logging
 from threading import local
+from importlib import import_module
+from django.conf import settings
 
 
 _thread_locals = local()
 
-META_KEYS = [
-    'USER', 'DJANGO_SETTINGS_MODULE', 'REQUEST_METHOD', 'PATH_INFO', 'HTTP_HOST',
-    'REMOTE_ADDR', 'QUERY_STRING', 'HTTP_USER_AGENT'
-]
+META_KEYS = {
+    'USER': 'user',
+    'X_FORWARDED_USER': 'XForwardedUser',
+    'DJANGO_SETTINGS_MODULE': 'djangoSettingsModule',
+    'REQUEST_METHOD': 'requestMethod',
+    'PATH_INFO': 'pathInfo',
+    'HTTP_HOST': 'httpHost',
+    'REMOTE_ADDR': 'remoteAddr',
+    'QUERY_STRING': 'queryString',
+    'HTTP_USER_AGENT': 'httpUserAgent'
+}
 
 
 def set_cid(cid):
@@ -25,6 +34,26 @@ def get_cid():
     return getattr(_thread_locals, 'CID', None)
 
 
+def get_extra_method_values():
+    """
+    The method looks for method string definition from django settings
+    Import the module and executes the method and returns a dictionary to be added to existing logging information
+    """
+    try:
+        mod, method = getattr(settings, 'LOG_EXTRA_METHOD').rsplit('.', 1)
+        mod = import_module(mod)
+        method = getattr(mod, method)
+
+        value = method()
+        if type(value) == dict:
+            return value
+        else:
+            return {}
+
+    except AttributeError:
+        return {}
+
+
 def add_extra_information(record=None, log_record={}):
     """
     Adds extra useful information to logging
@@ -33,8 +62,8 @@ def add_extra_information(record=None, log_record={}):
         request = log_record['request']
         del log_record['request']
 
-        for key in META_KEYS:
-            log_record[key] = request.META.get(key, '')
+        for key, value in META_KEYS.items():
+            log_record[value] = request.META.get(key, '')
 
         if 'body' in request:
             log_record['REQUEST_BODY'] = request.body
@@ -43,6 +72,8 @@ def add_extra_information(record=None, log_record={}):
             log_record['level'] = log_record['level'].upper()
         else:
             log_record['level'] = record.levelname if record else 'ERROR'
+
+    log_record.update(get_extra_method_values())
 
     return log_record
 
@@ -58,5 +89,5 @@ def log_output(request, response):
 
     if regex.match(str(response.status_code)):
         logger = logging.getLogger(__name__)
-        logger = logging.LoggerAdapter(logger, add_extra_information(log_record={'request': request}))
+        logger = logging.LoggerAdapter(logger, add_extra_information(log_record={'request': request}, ))
         logger.error('Exception with status code {0} happened.'.format(response.status_code))
