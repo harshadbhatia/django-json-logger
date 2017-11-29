@@ -1,6 +1,4 @@
-
 from .locals import get_cid, add_extra_information
-
 from pythonjsonlogger import jsonlogger
 
 
