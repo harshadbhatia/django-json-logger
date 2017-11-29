@@ -35,6 +35,7 @@ class CidMiddleware(MiddlewareMixin):
 
     def process_response(self, request, response):
         cid = get_cid()
+
         if cid and self.cid_response_header:
             response[self.cid_response_header] = cid
         # Intercept 5XX errors and log them
