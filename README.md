@@ -1,7 +1,8 @@
 Overview
 =======
-This library is pluggable django app which allows all logging to be outputted as JSON which and allows easily addition of custom fields
+This library is pluggable django app which allows all logging to be outputted as JSON and addition of extra context through method definition.
 ==========
+
 Pip:
 
     pip install <TBD>
@@ -17,35 +18,36 @@ Manual:
 Usage
 =====
 
-### Add `django-logger` to your django app in `INSTALLED_APPS`
+### Remove `Logging` setting from your Django project.
+
+
+### Add `django-logger` to your Django app in `INSTALLED_APPS`
 
 ```python
-    INSTALLED_APPS = (
+    INSTALLED_APPS = [
     ...
     'django_logger',
-)
+]
 ```
 
-### Add logger middleware to your `MIDDLEWARE` django settings file
+### Add logger middleware to your `MIDDLEWARE` Django settings file
 
 ```python
     MIDDLEWARE = [
     # ...
     'django_logger.middleware.CidMiddleware',
 ]
-)
 ```
 
-### Add `CID_GENERATE` to your django settings file
+### Add `CID_GENERATE` to your Django settings file
 
 ```python
     CID_GENERATE = True
-)
 ```
 
-### To add extra values to logging 
+### Method to add extra values to logging
 
-In django settings file add `LOG_EXTRA_METHOD` method definition as string value. The method should always return a dictionary.
+In Django settings file add `LOG_EXTRA_METHOD` method definition as string value. The method should always return a dictionary.
 
 ```python
     LOG_EXTRA_METHOD = 'my_module.my_method'
@@ -53,7 +55,7 @@ In django settings file add `LOG_EXTRA_METHOD` method definition as string value
 ```
 
 
-### Runserver using `python manage.py runserver`
+### Sample logging output
 
 The app should automatically now log data as JSON output. Current structure is:
 ```json
@@ -73,6 +75,13 @@ The app should automatically now log data as JSON output. Current structure is:
 "HTTP_USER_AGENT": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36",
 "REQUEST_BODY": "b''"
 }
-
-
 ```
+
+
+### Running tests
+In the project directory run the following command to execute tests
+```python
+python runtests.py
+```
+
+Currently the tests create a test.log file in the folder when running tests. It logs all the statements for 404 and 500 error codes and once completed. Looks for the logging statements presence in the file. Any errors are outputted to the console.

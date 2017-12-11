@@ -89,7 +89,6 @@ def log_output(request, response):
     regex = re.compile('5\d\d')
 
     if regex.match(str(response.status_code)):
-        logger = logging.getLogger(__name__)
+        logger = logging.getLogger('django.request')
         logger = logging.LoggerAdapter(logger, add_extra_information(log_record={'request': request}))
-
         logger.error('Exception with status code {0} happened.'.format(response.status_code))
